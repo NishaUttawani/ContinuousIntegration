@@ -788,11 +788,11 @@ class GraphView extends Component {
     });
 
     // Animate/Remove Old 
-    nodes.exit()
-      .transition()  
-      .duration(transitionTime)
-      .attr("opacity", 0)
-      .remove();
+    // nodes.exit()
+    //   .transition()  
+    //   .duration(transitionTime)
+    //   .attr("opacity", 0)
+    //   .remove();
 
     // Add New
     var newNodes = nodes.enter().append("g").classed("node", true)

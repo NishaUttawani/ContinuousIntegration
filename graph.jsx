@@ -25,93 +25,7 @@ const SPECIAL_EDGE_TYPE = "specialEdge";
 // NOTE: Edges must have 'source' & 'target' attributes
 // In a more realistic use case, the graph would probably originate 
 // elsewhere in the App or be generated from some other state upstream of this component.
-const sample = {
-  "nodes": [
-    {
-      "id": 1,
-      "title": "Clone",
-      "x": 100,
-      "y": 100,
-      "type": SPECIAL_TYPE
-    },
-    {
-      "id": 2,
-      "title": "Build",
-      "x": 300,
-      "y": 100,
-      "type":SPECIAL_TYPE
-
-    },
-    {
-      "id": 3,
-      "title": "Eslint",
-      "x": 500,
-      "y": 100,
-      "type": SPECIAL_TYPE
-    },
-    {
-      "id": 4,
-      "title": "Htmlhint",
-      "x": 500,
-      "y": 300,
-      "type": SPECIAL_TYPE
-    },
-    {
-      "id": 5,
-      "title": "Mocca",
-      "x": 500,
-      "y": 500,
-      "type": SPECIAL_TYPE
-    }
-    ,
-    {
-      "id": 6,
-      "title": "Manual Code Review",
-      "x": 700,
-      "y": 250,
-      "type": SPECIAL_TYPE
-    }
-  ],
-  "edges": [
-    {
-      "source": 1,
-      "target": 2,
-      "type": EMPTY_EDGE_TYPE
-    },
-    {
-      "source": 2,
-      "target": 3,
-      "type": EMPTY_EDGE_TYPE
-    },
-    {
-      "source": 2,
-      "target": 4,
-      "type": EMPTY_EDGE_TYPE
-    },
-    {
-      "source": 2,
-      "target": 5,
-      "type": EMPTY_EDGE_TYPE
-    },
-    {
-      "source": 3,
-      "target": 6,
-      "type": EMPTY_EDGE_TYPE
-    },
-    {
-      "source": 4,
-      "target": 6,
-      "type": EMPTY_EDGE_TYPE
-    },
-    {
-      "source": 5,
-      "target": 6,
-      "type": EMPTY_EDGE_TYPE
-    }
-
-
-  ]
-}
+//const sample = this.props.data;
 
 export default class Graph extends Component {
 
@@ -119,7 +33,7 @@ export default class Graph extends Component {
     super(props);
 
     this.state = {
-      graph: sample,
+      graph: this.props.data,
       selected: {}
     }
 
