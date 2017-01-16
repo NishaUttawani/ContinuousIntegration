@@ -1,0 +1,15 @@
+.upload {
+    width: 157px !important;
+    height: 57px !important;
+    background: url(../images/upload.png) !important;
+    margin-left: 10px;
+    overflow: hidden;
+}
+
+.upload input {
+    display: block !important;
+    width: 157px !important;
+    height: 57px !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+}

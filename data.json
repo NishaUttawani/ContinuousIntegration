@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": "n0",
+      "label": "Clone",
+      "x": 0,
+      "y": 0,
+      "size": 3
+    },
+    {
+      "id": "n1",
+      "label": "Build",
+      "x": 1,
+      "y": 0,
+      "size": 2
+    },
+    {
+      "id": "n2",
+      "label": "eslint",
+      "x": 2,
+      "y": 0,
+      "size": 2
+    },
+    {
+      "id": "n3",
+      "label": "htmlhint",
+      "x": 2,
+      "y": 1,
+      "size": 2
+    },
+    {
+      "id": "n4",
+      "label": "mocca",
+      "x": 2,
+      "y": 2,
+      "size": 2
+    },
+    {
+      "id": "n5",
+      "label": "mannual code review",
+      "x": 3,
+      "y": 1,
+      "size": 2
+    }
+
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "source": "n0",
+      "target": "n1"
+    },
+    {
+      "id": "e1",
+      "source": "n1",
+      "target": "n2"
+    },
+    {
+      "id": "e2",
+      "source": "n1",
+      "target": "n3"
+    },
+    {
+      "id": "e3",
+      "source": "n1",
+      "target": "n4"
+    },
+    {
+      "id": "e4",
+      "source": "n2",
+      "target": "n5"
+    },
+    {
+      "id": "e5",
+      "source": "n3",
+      "target": "n5"
+    },
+    {
+      "id": "e6",
+      "source": "n4",
+      "target": "n5"
+    }
+  
+  ]
+}

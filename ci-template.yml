@@ -1,0 +1,113 @@
+version: '1'
+name: 'SIMPLE_PIPELINE_WITH_CODE_REVIEW'
+stages:
+  gitClone:
+    type: git-clone
+    input:
+      
+      REPOSITORY_URL: {{payload.repo_url}}
+      REPOSITORY_REF: {{payload.repo_ref}}
+    output:
+    context:
+      workspace: {{CLONED_DIR}}
+    depends_on:
+  build:
+    type: node-build
+    input:
+      WORKSPACE: {{context.workspace}}
+    output:
+    context:
+    depends_on: gitClone
+  eslint:
+    type: eslint
+    input:
+      WORKSPACE: {{context.workspace}}
+      INCLUDE: {{payload.eslint.include}}
+      EXCLUDE: {{payload.eslint.exclude}}
+    output:
+      payload:
+        output:
+          lint:
+            js: {{OUTPUT}}
+    context:
+    depends_on:
+      - gitClone
+  htmlhint:
+    type: htmlhint
+    input:
+      WORKSPACE: {{context.workspace}}
+      INCLUDE: {{payload.htmlhint.include}}
+      EXCLUDE: {{payload.htmlhint.exclude}}
+    output:
+      payload:
+        output:
+          lint:
+            html: {{OUTPUT}}
+    context:
+    depends_on:
+      - gitClone
+  codeCoverage:
+    type: codecoverage
+    input:
+      WORKSPACE: {{context.workspace}}
+      INCLUDE: {{payload.codecoverage.include}}
+      EXCLUDE: {{payload.codecoverage.exclude}}
+    output:
+      payload:
+        output:
+          codecoverage: {{OUTPUT}}
+    context:
+    depends_on:
+      - gitClone
+  blackBoxTest:
+    type: mocha
+    input:
+      WORKSPACE: {{context.workspace}}
+      INCLUDE: {{payload.blackbox.include}}
+      EXCLUDE: {{payload.blackbox.exclude}}
+    output:
+      payload:
+        output:
+          blackbox: {{OUTPUT}}
+    context:
+    depends_on: build
+  whiteBoxTest:
+    type: mocha
+    input:
+      WORKSPACE: {{context.workspace}}
+      INCLUDE: {{payload.whitebox.include}}
+      EXCLUDE: {{payload.whitebox.exclude}}
+    output:
+      payload:
+        output:
+          whitebox: {{OUTPUT}}
+    context:
+    depends_on: build
+  unitTest:
+    type: mocha
+    input:
+      WORKSPACE: {{context.workspace}}
+      INCLUDE: {{payload.unittest.include}}
+      EXCLUDE: {{payload.unittest.exclude}}
+    output:
+      payload:
+        output:
+          unittest: {{OUTPUT}}
+    context:
+    depends_on: build
+  code-review:
+    type: manual-code-review
+    input:
+      WORKSPACE: {{context.workspace}}
+    output:
+      payload:
+        output:
+          code-review: {{OUTPUT}}
+    context:
+    depends_on:
+      - eslint
+      - htmlhint
+      - codeCoverage
+      - blackBoxTest
+      - whiteBoxTest
+      - unitTest
