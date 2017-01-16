@@ -22,7 +22,7 @@ constructor(props)
 		this.handleCompile = this.handleCompile.bind(this);
 		this.updateCode = this.updateCode.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.state={code:"//write code here",mode:"yaml",readOnly:true,err:'',isValid:false, isSubmit:false}
+		this.state={code:"//write your yml code here",mode:"yaml",readOnly:true,err:'',isValid:false, isSubmit:false}
 
 }
 
