@@ -10,6 +10,10 @@ var yamlLint = require('yaml-lint');
 import RaisedButton from 'material-ui/RaisedButton';
 import Graph from './graph.jsx';
 import Dialog from 'material-ui/Dialog';
+import brace from 'react-ace/node_modules/brace';
+import AceEditor from 'react-ace';
+import 'react-ace/node_modules/brace/mode/yaml';
+import 'react-ace/node_modules/brace/theme/tomorrow';
 
 var yaml = require('js-yaml');
 var fs   = require('fs');
@@ -19,8 +23,8 @@ var node = new Array();
 
 class CodeMirror extends React.Component
 {
-constructor(props)
-{
+	constructor(props)
+	{
 		super(props);
 
 		this.handleChange = this.handleChange.bind(this);
@@ -29,17 +33,19 @@ constructor(props)
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleVisualise = this.handleVisualise.bind(this);
 		this.handleClose = this.handleClose.bind(this);
-		this.state={open:false,graph:'',jsonCode:'',code:"//write your yml code here",mode:"yaml",readOnly:true,err:'',isValid:false, isSubmit:false,buttonState:true}
+		this.state={open:false,graph:'',jsonCode:'',code:"//write your yml code here",mode:"yaml",readOnly:true,err:[],isValid:false, isSubmit:false,buttonState:true}
 
-}
+	}
 
 	handleClose()
 	{
 		this.setState({open:false});
 	}
+
+
 	split()
 	{
-		var obj = doc.stages;	
+		var obj = doc.stages;
 		var x = 100,y=100;
 		var jsonArray=[];
 
@@ -61,15 +67,13 @@ constructor(props)
 			edge.push(obj[array[i]].depends_on);
 		}
 
-	
-			for(var i in node)
+
+		for(var i in node)
+		{
+			if(edge[i]!=null)
 			{
-				if(edge[i]!=null)
-				{	
-					if(edge[i].length<2)
-					{
-						
-						
+				if(edge[i].length<2)
+				{
 					//console.log(node[i] + " index "+(node.indexOf(node[i])+1) +" depends_on "+ (node.indexOf(edge[i].toString())+1));
 					var temp = {
 						source:node.indexOf(node[i])+1,
@@ -77,31 +81,31 @@ constructor(props)
 						type:"emptyEdge"
 					}
 					json.edges.push(temp);
-					}
-					else
+				}
+				else
+				{
+					for(var k in edge[i])
 					{
-						for(var k in edge[i])
-						{
-							//console.log("separate printing====>"+node.indexOf(edge[i][k]));
-							//console.log(node[i] +" index "+node.indexOf(node[i])+" depends_on "+ edge[i][k]+" index "+node.indexOf(edge[i][k]));
-							var temp = {
-						source:(node.indexOf(node[i])+1),				
-						target:(node.indexOf(edge[i][k])+1),
-						type:"emptyEdge"
-								}
-								json.edges.push(temp);
+						//console.log("separate printing====>"+node.indexOf(edge[i][k]));
+						//console.log(node[i] +" index "+node.indexOf(node[i])+" depends_on "+ edge[i][k]+" index "+node.indexOf(edge[i][k]));
+						var temp = {
+							source:(node.indexOf(node[i])+1),
+							target:(node.indexOf(edge[i][k])+1),
+							type:"emptyEdge"
 						}
+						json.edges.push(temp);
 					}
 				}
-				
-				
 			}
-	console.log(json);
-	this.setState({jsonCode:json});
-	console.log("json Code"+this.state.jsonCode);
-	var temp = <Graph data={json}/>
-	this.setState({graph:temp});
-	this.setState({open:true});
+
+
+		}
+		console.log(json);
+		this.setState({jsonCode:json});
+		console.log("json Code"+this.state.jsonCode);
+		var temp = <Graph data={json}/>
+		this.setState({graph:temp});
+		this.setState({open:true});
 
 	}
 	handleVisualise()
@@ -111,48 +115,55 @@ constructor(props)
 		this.split();
 	}
 
-	handleChange()
+	handleChange()  //for upload button
 	{
-	  var that = this;
+		var that = this;
 		var temp = document.getElementById('filedata').files[0];
 		var ext = temp.name.split('.').pop().toLowerCase();
 		if(ext!="yml")
 		{
-		    alert('Not a yml file');
+			alert('Not a yml file');
 		}
 		else{
 			var reader = new FileReader();
 			reader.onload = function(e) {
-			
-			that.setState({
-				code:reader.result });
+
+				that.setState({
+					code:reader.result });
 				}
-		 reader.readAsText(temp);
+				reader.readAsText(temp);
+			}
+
 		}
 
-	 }
-	 handleCompile()
-	 {	
-	 	this.setState({buttonState:false});
-	 	var that = this;
-		 yamlLint.lint(this.state.code).then(function () {
-			 that.setState({
-				 isValid: true
-			 });
-			 console.log('Valid YAML file.');
-			 that.setState({err:'Valid file'});
-		 }).catch(function (error) {
-			 console.error('Invalid YAML file.', error);
-			 that.setState({isValid:false});
-			 that.setState({err:error.name+''+error.reason+''+error.message});
-		 });
+		handleCompile()
+		{
+			this.setState({buttonState:false});
+			var that = this;
+			yamlLint.lint(this.state.code).then(function () {
+				that.setState({
+					isValid: true
+				});
+				that.setState({err:[]	})
+				alert('Valid File');
+			}).catch(function (error) {
+				var errtext=error.message;
+				var startindex=error.message.indexOf("at line") + 8;
+				var endindex=error.message.indexOf("column")-2;
 
-	 }
-	updateCode(newCode)
-	{
-    this.setState({code:newCode});
-		//console.log(this.state.code);
-	}
+				var errrow=error.message.substring(startindex,endindex)-1;
+				var myerror=[{ row: errrow, column: 2, type: 'error', text:errtext }];
+				that.setState({isValid:false});
+				that.setState({err:myerror})
+				alert('Invalid file!!! correct the error.');
+				console.log(error.message);
+			});
+
+		}
+		updateCode(newCode)
+		{
+			this.setState({code:newCode});
+		}
 
 		handleSubmit()
 		{	if(this.state.isValid)
@@ -169,71 +180,70 @@ constructor(props)
 		}
 
 
-	render () {
+		render () {
 
-		const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.handleClose}
-      />,
-    ];
-		var options = {
-			lineNumbers: true,
-			mode: this.state.mode
-		};
-		var options1 = {
-			lineNumbers: false,
-			mode: this.state.mode,
-			readOnly: this.state.readOnly
-		};
+			const actions = [
+				<FlatButton
+					label="Cancel"
+					primary={true}
+					onTouchTap={this.handleClose}
+					/>,
+				<FlatButton
+					label="Submit"
+					primary={true}
+					keyboardFocused={true}
+					onTouchTap={this.handleClose}
+					/>,
+			];
+			var myerr=[{ row: 1, column: 2, type: 'error', text: 'Some error.'}];
 
-		var box=null;
-		if(this.state.isSubmit){
-			 box= <JsCodeMirror/>;
-		}
-		else{
-			box= <div className="container">
-			<div className="row">
-				<Codemirror className="col-xs-6" ref="editor" value={this.state.code} onChange={this.updateCode} options={options} id="txtCode"/>
-				<Codemirror className="col-xs-6" ref="editor2" value={this.state.err} options={options1}/>
-			</div>
-			<div className="row">
-				<div className="upload ">
-				<input type="file" name="upload" onChange={this.handleChange} id='filedata' />
+			var box=null;
+
+			if(this.state.isSubmit){
+				box= <JsCodeMirror/>;
+			}
+			else{
+				box= <div className="container">
+					<AceEditor
+						class="row"
+						mode="yaml"
+						theme="tomorrow"
+						value={this.state.code}
+						onChange={this.updateCode}
+						name="UNIQUE_ID_OF_DIV"
+						annotations={this.state.err}
+						editorProps={{$blockScrolling: true}}
+						style={{width:"500px"} ,{border:"1px solid black"}}
+						/>
+					<div className="row">
+						<div className="upload ">
+							<input type="file" name="upload" onChange={this.handleChange} id='filedata' />
+						</div>
+						<RaisedButton label="Next" secondary={true}  onClick={this.handleCompile} style={{marginLeft:"1%"}}/>
+						<RaisedButton label="Submit" secondary={true} onClick={this.handleSubmit} style={{marginLeft:"1%"}} />
+						<RaisedButton label="Visualise" secondary={true} disabled={this.state.buttonState}onClick={this.handleVisualise} style={{marginLeft:"1%"}} />
+
+						<Dialog
+							title="Dialog With Actions"
+							actions={actions}
+							modal={false}
+							open={this.state.open}
+							onRequestClose={this.handleClose}>
+							{this.state.graph}
+						</Dialog>
+					</div>
+
 				</div>
-				<RaisedButton label="Next" secondary={true}  onClick={this.handleCompile} style={{marginLeft:"1%"}}/>
-				<RaisedButton label="Submit" secondary={true} onClick={this.handleSubmit} style={{marginLeft:"1%"}} />
-				<RaisedButton label="Visualise" secondary={true} disabled={this.state.buttonState}onClick={this.handleVisualise} style={{marginLeft:"1%"}} />
-				
-				<Dialog
-          			title="Dialog With Actions"
-          			 actions={actions}
-         			 modal={false}
-         			 open={this.state.open}
-         			 onRequestClose={this.handleClose}>
-          				{this.state.graph}
-       			 </Dialog>
-			</div>
+			}
 
-			</div>
+
+			return (
+				<div>
+					{box}
+				</div>
+
+			);
+		}
 	}
 
-
-		return (
-			<div>
-
-				{box}
-			</div>
-
-		);
-	}
-}
-
-export default CodeMirror;
+	export default CodeMirror;
