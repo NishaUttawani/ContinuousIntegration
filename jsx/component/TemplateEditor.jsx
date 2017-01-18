@@ -1,11 +1,5 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Codemirror = require('react-codemirror');
-require('codemirror/mode/yaml/yaml');
-require('codemirror/mode/javascript/javascript');
-import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
-import JsCodeMirror from './JsCodeMirror.jsx';
 var yamlLint = require('yaml-lint');
 import RaisedButton from 'material-ui/RaisedButton';
 import Graph from './graph.jsx';
@@ -14,26 +8,28 @@ import brace from 'react-ace/node_modules/brace';
 import AceEditor from 'react-ace';
 import 'react-ace/node_modules/brace/mode/yaml';
 import 'react-ace/node_modules/brace/theme/tomorrow';
+import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
+import TransformationFunc from './TransformationFunc.jsx';
 
-var yaml = require('js-yaml');
-var fs   = require('fs');
+
 var doc;
 var edge = new Array();
 var node = new Array();
 
-class CodeMirror extends React.Component
+class TemplateEditor extends React.Component
 {
 	constructor(props)
 	{
 		super(props);
 
 		this.handleChange = this.handleChange.bind(this);
-		this.handleCompile = this.handleCompile.bind(this);
+		this.handleVerify = this.handleVerify.bind(this);
 		this.updateCode = this.updateCode.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleVisualise = this.handleVisualise.bind(this);
 		this.handleClose = this.handleClose.bind(this);
-		this.state={open:false,graph:'',jsonCode:'',code:"//write your yml code here",mode:"yaml",readOnly:true,err:[],isValid:false, isSubmit:false,buttonState:true}
+		this.state={open:false,graph:'',jsonCode:'',code:"//write your yml code here",err:[],isValid:false, isSubmit:false,buttonState:true}
 
 	}
 
@@ -136,7 +132,7 @@ class CodeMirror extends React.Component
 
 		}
 
-		handleCompile()
+		handleVerify()
 		{
 			this.setState({buttonState:false});
 			var that = this;
@@ -160,6 +156,7 @@ class CodeMirror extends React.Component
 			});
 
 		}
+
 		updateCode(newCode)
 		{
 			this.setState({code:newCode});
@@ -199,13 +196,15 @@ class CodeMirror extends React.Component
 
 			var box=null;
 
-			if(this.state.isSubmit){
-				box= <JsCodeMirror/>;
+			if(this.state.isSubmit)
+			{
+				box= <TransformationFunc/>;
 			}
-			else{
+			else
+			{
 				box= <div className="container">
 					<AceEditor
-						class="row"
+						className="row"
 						mode="yaml"
 						theme="tomorrow"
 						value={this.state.code}
@@ -219,7 +218,7 @@ class CodeMirror extends React.Component
 						<div className="upload ">
 							<input type="file" name="upload" onChange={this.handleChange} id='filedata' />
 						</div>
-						<RaisedButton label="Next" secondary={true}  onClick={this.handleCompile} style={{marginLeft:"1%"}}/>
+						<RaisedButton label="Verify" secondary={true}  onClick={this.handleVerify} style={{marginLeft:"1%"}}/>
 						<RaisedButton label="Submit" secondary={true} onClick={this.handleSubmit} style={{marginLeft:"1%"}} />
 						<RaisedButton label="Visualise" secondary={true} disabled={this.state.buttonState}onClick={this.handleVisualise} style={{marginLeft:"1%"}} />
 
@@ -243,7 +242,7 @@ class CodeMirror extends React.Component
 				</div>
 
 			);
-		}
-	}
+		} //end of render
+	} //end of class TemplateEditor
 
-	export default CodeMirror;
+	export default TemplateEditor;
