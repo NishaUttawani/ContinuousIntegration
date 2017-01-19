@@ -16,7 +16,11 @@ stages:
       WORKSPACE: {{context.workspace}}
     output:
     context:
+<<<<<<< HEAD
     depends_on:
+=======
+    depends_on: 
+>>>>>>> 6d348918c02e456e53af2dfe88676597c3c71786
     - gitClone
   eslint:
     type: eslint
@@ -30,7 +34,7 @@ stages:
           lint:
             js: {{OUTPUT}}
     context:
-    depends_on:
+    depends_on: 
       - gitClone
   htmlhint:
     type: htmlhint
@@ -44,7 +48,11 @@ stages:
           lint:
             html: {{OUTPUT}}
     context:
+<<<<<<< HEAD
     depends_on:
+=======
+    depends_on: 
+>>>>>>> 6d348918c02e456e53af2dfe88676597c3c71786
        - gitClone
   codeCoverage:
     type: codecoverage
@@ -57,7 +65,7 @@ stages:
         output:
           codecoverage: {{OUTPUT}}
     context:
-    depends_on:
+    depends_on: 
       - gitClone
   blackBoxTest:
     type: mocha
@@ -70,7 +78,11 @@ stages:
         output:
           blackbox: {{OUTPUT}}
     context:
+<<<<<<< HEAD
     depends_on:
+=======
+    depends_on: 
+>>>>>>> 6d348918c02e456e53af2dfe88676597c3c71786
       - build
   whiteBoxTest:
     type: mocha
@@ -83,7 +95,11 @@ stages:
         output:
           whitebox: {{OUTPUT}}
     context:
+<<<<<<< HEAD
     depends_on:
+=======
+    depends_on: 
+>>>>>>> 6d348918c02e456e53af2dfe88676597c3c71786
       - build
   unitTest:
     type: mocha
@@ -96,7 +112,11 @@ stages:
         output:
           unittest: {{OUTPUT}}
     context:
+<<<<<<< HEAD
     depends_on:
+=======
+    depends_on: 
+>>>>>>> 6d348918c02e456e53af2dfe88676597c3c71786
       - build
   code-review:
     type: manual-code-review
