@@ -36,6 +36,8 @@
   "dependencies": {
     "draft-js": "^0.9.1",
     "js-yaml": "^3.7.0",
+    "react-ace": "^4.1.1",
+    "react-brace": "^3.6.6",
     "react-rte": "^0.11.0",
     "react-sigma": "^1.2.15"
   }
