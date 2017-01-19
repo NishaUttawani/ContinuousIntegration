@@ -10,6 +10,11 @@ var yamlLint = require('yaml-lint');
 import RaisedButton from 'material-ui/RaisedButton';
 import Graph from './graph.jsx';
 import Dialog from 'material-ui/Dialog';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import 'brace/mode/yaml';
+import 'brace/theme/tomorrow';
+
 
 var yaml = require('js-yaml');
 var fs   = require('fs');
@@ -29,17 +34,21 @@ constructor(props)
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleVisualise = this.handleVisualise.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+		this.onChange = this.onChange.bind(this);
 		this.state={open:false,graph:'',jsonCode:'',code:"//write your yml code here",mode:"yaml",readOnly:true,err:'',isValid:false, isSubmit:false,buttonState:true}
 
 }
 
+onChange(newValue) {
+console.log('change',newValue);
+}
 	handleClose()
 	{
 		this.setState({open:false});
 	}
 	split()
 	{
-		var obj = doc.stages;	
+		var obj = doc.stages;
 		var x = 100,y=100;
 		var jsonArray=[];
 
@@ -61,15 +70,15 @@ constructor(props)
 			edge.push(obj[array[i]].depends_on);
 		}
 
-	
+
 			for(var i in node)
 			{
 				if(edge[i]!=null)
-				{	
+				{
 					if(edge[i].length<2)
 					{
-						
-						
+
+
 					//console.log(node[i] + " index "+(node.indexOf(node[i])+1) +" depends_on "+ (node.indexOf(edge[i].toString())+1));
 					var temp = {
 						source:node.indexOf(node[i])+1,
@@ -85,7 +94,7 @@ constructor(props)
 							//console.log("separate printing====>"+node.indexOf(edge[i][k]));
 							//console.log(node[i] +" index "+node.indexOf(node[i])+" depends_on "+ edge[i][k]+" index "+node.indexOf(edge[i][k]));
 							var temp = {
-						source:(node.indexOf(node[i])+1),				
+						source:(node.indexOf(node[i])+1),
 						target:(node.indexOf(edge[i][k])+1),
 						type:"emptyEdge"
 								}
@@ -93,8 +102,8 @@ constructor(props)
 						}
 					}
 				}
-				
-				
+
+
 			}
 	console.log(json);
 	this.setState({jsonCode:json});
@@ -123,7 +132,7 @@ constructor(props)
 		else{
 			var reader = new FileReader();
 			reader.onload = function(e) {
-			
+
 			that.setState({
 				code:reader.result });
 				}
@@ -132,7 +141,7 @@ constructor(props)
 
 	 }
 	 handleCompile()
-	 {	
+	 {
 	 	this.setState({buttonState:false});
 	 	var that = this;
 		 yamlLint.lint(this.state.code).then(function () {
@@ -142,12 +151,17 @@ constructor(props)
 			 console.log('Valid YAML file.');
 			 that.setState({err:'Valid file'});
 		 }).catch(function (error) {
-			 console.error('Invalid YAML file.', error);
+			 console.error('Invalid YAML file.',error);
+			var t=error.message.indexOf("at line");
+			var m=error.message.indexOf("column");
+			console.log(error.message.substring(t+8,m-2));
 			 that.setState({isValid:false});
 			 that.setState({err:error.name+''+error.reason+''+error.message});
+
 		 });
 
 	 }
+
 	updateCode(newCode)
 	{
     this.setState({code:newCode});
@@ -199,10 +213,23 @@ constructor(props)
 			 box= <JsCodeMirror/>;
 		}
 		else{
+
 			box= <div className="container">
 			<div className="row">
-				<Codemirror className="col-xs-6" ref="editor" value={this.state.code} onChange={this.updateCode} options={options} id="txtCode"/>
-				<Codemirror className="col-xs-6" ref="editor2" value={this.state.err} options={options1}/>
+				<AceEditor
+					mode="yaml"
+					theme="tomorrow"
+					onChange={this.updateCode}
+					name="UNIQUE_ID_OF_DIV"
+
+					editorProps={{$blockScrolling: true}}
+					value={this.state.code}
+					setOptions={{
+
+					}}
+
+					style={{width:"500px"} ,{border:"1px solid black"}}
+					/>
 			</div>
 			<div className="row">
 				<div className="upload ">
@@ -211,7 +238,7 @@ constructor(props)
 				<RaisedButton label="Next" secondary={true}  onClick={this.handleCompile} style={{marginLeft:"1%"}}/>
 				<RaisedButton label="Submit" secondary={true} onClick={this.handleSubmit} style={{marginLeft:"1%"}} />
 				<RaisedButton label="Visualise" secondary={true} disabled={this.state.buttonState}onClick={this.handleVisualise} style={{marginLeft:"1%"}} />
-				
+
 				<Dialog
           			title="Dialog With Actions"
           			 actions={actions}
@@ -219,7 +246,7 @@ constructor(props)
          			 open={this.state.open}
          			 onRequestClose={this.handleClose}>
           				{this.state.graph}
-       			 </Dialog>
+       	</Dialog>
 			</div>
 
 			</div>

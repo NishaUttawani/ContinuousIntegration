@@ -34,6 +34,7 @@
   "dependencies": {
     "draft-js": "^0.9.1",
     "js-yaml": "^3.7.0",
+    "react-digraph": "^1.0.6",
     "react-rte": "^0.11.0",
     "react-sigma": "^1.2.15"
   }

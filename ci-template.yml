@@ -4,7 +4,6 @@ stages:
   gitClone:
     type: git-clone
     input:
-      
       REPOSITORY_URL: {{payload.repo_url}}
       REPOSITORY_REF: {{payload.repo_ref}}
     output:
@@ -17,7 +16,8 @@ stages:
       WORKSPACE: {{context.workspace}}
     output:
     context:
-    depends_on: gitClone
+    depends_on:
+    - gitClone
   eslint:
     type: eslint
     input:
@@ -45,7 +45,7 @@ stages:
             html: {{OUTPUT}}
     context:
     depends_on:
-      - gitClone
+       - gitClone
   codeCoverage:
     type: codecoverage
     input:
@@ -70,7 +70,8 @@ stages:
         output:
           blackbox: {{OUTPUT}}
     context:
-    depends_on: build
+    depends_on:
+      - build
   whiteBoxTest:
     type: mocha
     input:
@@ -82,7 +83,8 @@ stages:
         output:
           whitebox: {{OUTPUT}}
     context:
-    depends_on: build
+    depends_on:
+      - build
   unitTest:
     type: mocha
     input:
@@ -94,7 +96,8 @@ stages:
         output:
           unittest: {{OUTPUT}}
     context:
-    depends_on: build
+    depends_on:
+      - build
   code-review:
     type: manual-code-review
     input:
