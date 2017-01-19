@@ -1,8 +1,8 @@
 var config = {
-   entry: './main.js',
+   entry: './js/main.js',
 
    output: {
-      path:'./',
+      path:'./js/',
       filename: 'index.js',
    },
 
